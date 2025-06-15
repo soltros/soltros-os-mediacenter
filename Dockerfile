@@ -17,16 +17,16 @@ RUN chmod +x \
     /ctx/overrides.sh \
     /ctx/cleanup.sh \
     /ctx/desktop-packages.sh \
-    /ctx/cosmic-desktop.sh \
+    /ctx/htpc-setup.sh \
     /ctx/gaming.sh \
     /ctx/waterfox-installer.sh \
    /ctx/desktop-defaults.sh
 
 # Stage 2: final image
-FROM ${BASE_IMAGE}:${TAG_VERSION} AS soltros
+FROM ${BASE_IMAGE}:${TAG_VERSION} AS soltros-htpc
 
-LABEL org.opencontainers.image.title="SoltrOS" \
-    org.opencontainers.image.description="Gaming-ready Universal Blue image with MacBook support" \
+LABEL org.opencontainers.image.title="SoltrOS HTPC" \
+    org.opencontainers.image.description="HTPC-ready Universal Blue image with Plasma Bigscreen and automatic login" \
     org.opencontainers.image.vendor="Derrik" \
     org.opencontainers.image.version="42"
 
@@ -46,11 +46,6 @@ RUN rpm-ostree install \
 
 # Enable Tailscale
 RUN ln -sf /usr/lib/systemd/system/tailscaled.service /etc/systemd/system/multi-user.target.wants/tailscaled.service
-
-# Set up Cosmic Settings Backup
-RUN chmod +x /usr/share/soltros/bin/cosmic-settings-backup/cbackup
-RUN chmod +x /usr/share/soltros/bin/cosmic-settings-backup/cosmic-settings-backup.desktop
-RUN mv /usr/share/soltros/bin/cosmic-settings-backup/cosmic-settings-backup.desktop /usr/share/applications/
 
 # Add Terra repo separately with better error handling
 RUN for i in {1..3}; do \
@@ -72,7 +67,7 @@ RUN for i in {1..3}; do \
     break || sleep 10; \
     done && \
     dconf update && \
-    echo -e '\n\e[1;36mWelcome to SoltrOS — powered by Universal Blue\e[0m\n' > /etc/issue && \
+    echo -e '\n\e[1;36mWelcome to SoltrOS HTPC — powered by Universal Blue\e[0m\n' > /etc/issue && \
     gtk-update-icon-cache -f /usr/share/icons/hicolor
 
 # Mount and run build script from ctx stage

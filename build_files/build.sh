@@ -21,7 +21,7 @@ function echo_group() {
     echo "::endgroup::"
 }
 
-log "Starting SoltrOS build process"
+log "Starting SoltrOS HTPC build process"
 
 # Base image for reference (though not used in conditional logic anymore)
 BASE_IMAGE="${BASE_IMAGE:-ghcr.io/ublue-os/base-main}"
@@ -30,14 +30,16 @@ log "Building for base image: $BASE_IMAGE"
 log "Enable container signing"
 echo_group /ctx/signing.sh
 
-log "Install Cosmic Desktop Environment"
-echo_group /ctx/cosmic-desktop.sh
+# COSMIC removed for HTPC variant - using Plasma Bigscreen instead
+
+log "Setup HTPC configuration with Plasma Bigscreen"
+echo_group /ctx/htpc-setup.sh
 
 log "Install Waterfox browser BIN"
 echo_group /ctx/waterfox-installer.sh
 
-log "Install desktop packages"
-echo_group /ctx/desktop-packages.sh
+log "Install HTPC-focused packages"
+echo_group /ctx/htpc-packages.sh
 
 log "Setup desktop defaults"
 echo_group /ctx/desktop-defaults.sh
@@ -51,4 +53,4 @@ echo_group /ctx/overrides.sh
 log "Post build cleanup"
 echo_group /ctx/cleanup.sh
 
-log "SoltrOS build process completed successfully"
+log "SoltrOS HTPC build process completed successfully"
