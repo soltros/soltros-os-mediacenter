@@ -132,15 +132,27 @@ EOF
 
 log "Configuring HTPC-specific systemd services"
 # Enable SDDM display manager
-systemctl enable sddm.service
+ln -sf /usr/lib/systemd/system/sddm.service /etc/systemd/system/display-manager.service
 
-# Enable audio services for media playback
-systemctl enable pipewire.service
-systemctl enable pipewire-pulse.service
-systemctl enable wireplumber.service
+# Enable audio services for media playback (check if they exist first)
+if [ -f /usr/lib/systemd/system/pipewire.service ]; then
+    ln -sf /usr/lib/systemd/system/pipewire.service /etc/systemd/system/multi-user.target.wants/pipewire.service
+fi
+
+if [ -f /usr/lib/systemd/user/pipewire-pulse.service ]; then
+    mkdir -p /etc/systemd/user/default.target.wants
+    ln -sf /usr/lib/systemd/user/pipewire-pulse.service /etc/systemd/user/default.target.wants/pipewire-pulse.service
+fi
+
+if [ -f /usr/lib/systemd/user/wireplumber.service ]; then
+    mkdir -p /etc/systemd/user/default.target.wants
+    ln -sf /usr/lib/systemd/user/wireplumber.service /etc/systemd/user/default.target.wants/wireplumber.service
+fi
 
 # Enable network services for media streaming
-systemctl enable avahi-daemon.service
+if [ -f /usr/lib/systemd/system/avahi-daemon.service ]; then
+    ln -sf /usr/lib/systemd/system/avahi-daemon.service /etc/systemd/system/multi-user.target.wants/avahi-daemon.service
+fi
 
 log "Setting up HTPC media directories and emulation"
 # Create standard media directories
@@ -280,7 +292,9 @@ model_number=1
 EOF
 
 # Enable minidlna service
-systemctl enable minidlna.service
+if [ -f /usr/lib/systemd/system/minidlna.service ]; then
+    ln -sf /usr/lib/systemd/system/minidlna.service /etc/systemd/system/multi-user.target.wants/minidlna.service
+fi
 
 log "Finalizing htpc user permissions for emulation and media"
 # Set proper ownership for all htpc user files
