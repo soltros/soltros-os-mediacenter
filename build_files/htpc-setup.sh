@@ -23,13 +23,6 @@ HTPC_PACKAGES=(
     sddm-breeze
     sddm-kcm
     
-    # Media center applications
-    kodi
-    
-    # Media server access and streaming
-    kodi-inputstream-adaptive
-    kodi-inputstream-rtmp
-    
     # Remote control support
     lirc
     

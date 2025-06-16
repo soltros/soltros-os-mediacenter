@@ -1,7 +1,7 @@
 #!/usr/bin/bash
-# SoltrOS: Container Signing Setup Script
+# SoltrOS HTPC: Container Signing Setup Script
 # Author: Derrik
-# Description: Configures sigstore signing trust for ghcr.io/soltros containers
+# Description: Configures sigstore signing trust for ghcr.io/soltros/soltros-htpc
 
 set ${SET_X:+-x} -eou pipefail
 
@@ -9,7 +9,7 @@ set ${SET_X:+-x} -eou pipefail
 NAMESPACE="soltros"
 PUBKEY="/etc/pki/containers/${NAMESPACE}.pub"
 POLICY="/etc/containers/policy.json"
-REGISTRY="ghcr.io/${NAMESPACE}"
+REGISTRY="ghcr.io/${NAMESPACE}/soltros-htpc"
 
 log() {
   echo "=== $* ==="
@@ -47,7 +47,7 @@ elif [ ! -f "$POLICY" ]; then
 EOF
 fi
 
-# Add sigstore configuration for our registry
+# Add sigstore configuration for HTPC registry only
 jq ".transports.docker[\"${REGISTRY}\"] = [{
     \"type\": \"sigstoreSigned\",
     \"keyPaths\": [\"${PUBKEY}\"],
@@ -59,8 +59,8 @@ jq ".transports.docker[\"${REGISTRY}\"] = [{
 log "Copying cosign public key"
 cp /ctx/soltros.pub "$PUBKEY"
 
-log "Creating registry policy YAML"
-cat > "/etc/containers/registries.d/${NAMESPACE}.yaml" << EOF
+log "Creating registry policy YAML for HTPC"
+cat > "/etc/containers/registries.d/soltros-htpc.yaml" << EOF
 docker:
   ${REGISTRY}:
     use-sigstore-attachments: true

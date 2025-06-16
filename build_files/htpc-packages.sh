@@ -61,9 +61,12 @@ HTPC_PACKAGES=(
 
 dnf5 install --setopt=install_weak_deps=False --nogpgcheck -y "${HTPC_PACKAGES[@]}"
 
-log "Disable Copr repos as we do not need them anymore"
-for repo in "${COPR_REPOS[@]}"; do
-    dnf5 -y copr disable "$repo"
-done
+log "Disable Copr repos if any were enabled"
+if [ ${#COPR_REPOS[@]} -gt 0 ]; then
+    for repo in "${COPR_REPOS[@]}"; do
+        dnf5 -y copr disable "$repo"
+    done
+fi
 
-log "HTPC package installation with emulators complete"
+log "HTPC package installation with basic emulation support complete"
+log "Note: Most emulators are best installed via Flatpak for better compatibility"
