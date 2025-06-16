@@ -55,8 +55,8 @@ HTPC_PACKAGES=(
 dnf5 install --setopt=install_weak_deps=False --nogpgcheck --skip-unavailable -y "${HTPC_PACKAGES[@]}"
 
 log "Creating HTPC user account"
-# Create the htpc user with appropriate groups
-useradd -m -G wheel,audio,video,input,pulse-access -s /bin/bash htpc
+# Create the htpc user with basic groups first
+useradd -m -G wheel -s /bin/bash htpc
 echo "htpc:htpc" | chpasswd
 
 # Set up htpc user home directory permissions
@@ -287,7 +287,26 @@ log "Finalizing htpc user permissions for emulation and media"
 chown -R htpc:htpc /home/htpc
 
 # Add htpc user to additional groups for hardware access and emulation
-usermod -a -G dialout,cdrom,floppy,tape,dip,video,plugdev,input,games htpc
+# Only add to groups that exist on the system
+usermod -a -G dialout htpc 2>/dev/null || true
+usermod -a -G cdrom htpc 2>/dev/null || true
+usermod -a -G floppy htpc 2>/dev/null || true
+usermod -a -G tape htpc 2>/dev/null || true
+usermod -a -G dip htpc 2>/dev/null || true
+usermod -a -G video htpc 2>/dev/null || true
+usermod -a -G audio htpc 2>/dev/null || true
+usermod -a -G input htpc 2>/dev/null || true
+usermod -a -G plugdev htpc 2>/dev/null || true
+usermod -a -G games htpc 2>/dev/null || true
+
+# Create any missing groups that are essential for HTPC use
+groupadd -f audio
+groupadd -f video
+groupadd -f input
+groupadd -f games
+
+# Now add to the groups we just created
+usermod -a -G audio,video,input,games htpc
 
 log "Creating HTPC welcome script with emulation info"
 # Create a welcome script for first boot
