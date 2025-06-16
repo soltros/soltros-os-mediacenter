@@ -10,9 +10,6 @@ COPY soltros.pub /ctx/soltros.pub
 # Make my Justfile the default justfile
 COPY system_files/usr/share/soltros/just/soltros.just /usr/share/ublue-os/justfile
 
-# Copy needed config files
-RUN rsync -avz system_files/etc/ /etc/
-
 # Change perms
 RUN chmod +x \
     /ctx/build.sh \
