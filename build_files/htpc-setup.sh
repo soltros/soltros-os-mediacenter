@@ -52,7 +52,7 @@ HTPC_PACKAGES=(
     wireplumber
 )
 
-dnf5 install --setopt=install_weak_deps=False --nogpgcheck -y "${HTPC_PACKAGES[@]}"
+dnf5 install --setopt=install_weak_deps=False --nogpgcheck --skip-unavailable -y "${HTPC_PACKAGES[@]}"
 
 log "Creating HTPC user account"
 # Create the htpc user with appropriate groups
