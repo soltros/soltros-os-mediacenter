@@ -55,9 +55,6 @@ HTPC_PACKAGES=(
 dnf5 install --setopt=install_weak_deps=False --nogpgcheck --skip-unavailable -y "${HTPC_PACKAGES[@]}"
 
 
-
-
-
 log "Configuring HTPC-specific systemd services"
 # Enable SDDM display manager
 ln -sf /usr/lib/systemd/system/sddm.service /etc/systemd/system/display-manager.service
@@ -81,17 +78,6 @@ fi
 if [ -f /usr/lib/systemd/system/avahi-daemon.service ]; then
     ln -sf /usr/lib/systemd/system/avahi-daemon.service /etc/systemd/system/multi-user.target.wants/avahi-daemon.service
 fi
-
-log "Setting up HTPC media directories and emulation"
-# Create standard media directories
-mkdir -p /home/htpc/{Videos,Music,Pictures,Downloads}
-
-# Create emulation directories
-mkdir -p /home/htpc/Games/{ROMs,Saves,Screenshots,BIOS}
-mkdir -p /home/htpc/Games/ROMs/{NES,SNES,N64,GameCube,Wii,GB,GBC,GBA,DS,PSX,PS2,PSP,Genesis,Saturn,Dreamcast,Arcade}
-
-# Set up Games directories with proper permissions
-chown -R htpc:htpc /home/htpc/Games
 
 log "Configuring remote control support"
 # Set up LIRC for remote control support
