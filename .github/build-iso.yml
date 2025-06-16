@@ -1,0 +1,65 @@
+name: Build SoltrOS HTPC ISO
+on:
+  workflow_dispatch:
+  # You can also trigger on releases or tags
+  # release:
+  #   types: [published]
+
+jobs:
+  build-iso:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up environment
+        run: |
+          sudo apt update
+          sudo apt install -y podman buildah skopeo
+
+      - name: Generate ISO filename
+        id: iso-name
+        run: |
+          echo "iso-name=soltros-htpc-$(date +%Y%m%d).iso" >> $GITHUB_OUTPUT
+
+      - name: Build ISO
+        uses: jasonn3/build-container-installer@v1.0.3
+        id: build
+        with:
+          arch: x86_64
+          image_name: soltros-htpc
+          image_repo: ghcr.io/soltros
+          image_tag: latest
+          version: 42
+          variant: Silverblue
+          iso_name: ${{ steps.iso-name.outputs.iso-name }}
+          enrollment_password: universalblue
+          secure_boot_key_url: 'https://github.com/ublue-os/akmods/raw/main/certs/public_key.der'
+          enable_cache_dnf: "false"
+          enable_cache_skopeo: "false"
+          flatpak_remote_refs: |
+            flathub:runtime/org.freedesktop.Platform//23.08
+            flathub:runtime/org.freedesktop.Sdk//23.08
+            flathub:runtime/org.gtk.Gtk3theme.Breeze//3.22
+            flathub:app/com.github.iwalton3.jellyfin-media-player//stable
+            flathub:app/org.libretro.RetroArch//stable
+            flathub:app/com.github.tchx84.Flatseal//stable
+            flathub:app/org.videolan.VLC//stable
+            flathub:app/org.qbittorrent.qBittorrent//stable
+
+      - name: Upload ISO as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.iso-name.outputs.iso-name }}
+          path: ${{ steps.build.outputs.iso_path }}
+          retention-days: 30
+
+      - name: Upload checksum as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.iso-name.outputs.iso-name }}-checksum
+          path: ${{ steps.build.outputs.iso_path }}.sha256
+          retention-days: 30
