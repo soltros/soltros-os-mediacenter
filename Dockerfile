@@ -17,6 +17,7 @@ RUN chmod +x \
     /ctx/overrides.sh \
     /ctx/cleanup.sh \
     /ctx/htpc-setup.sh \
+    /ctx/htpc-packages.sh \
     /ctx/gaming.sh \
     /ctx/waterfox-installer.sh \
    /ctx/desktop-defaults.sh
