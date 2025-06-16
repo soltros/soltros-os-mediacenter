@@ -59,7 +59,7 @@ HTPC_PACKAGES=(
     wireplumber
 )
 
-dnf5 install --setopt=install_weak_deps=False --nogpgcheck -y "${HTPC_PACKAGES[@]}"
+dnf5 install --setopt=install_weak_deps=False --nogpgcheck --skip-unavailable -y "${HTPC_PACKAGES[@]}"
 
 log "Disable Copr repos if any were enabled"
 if [ ${#COPR_REPOS[@]} -gt 0 ]; then
